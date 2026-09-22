@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Laya Answer Router</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div class="mark" aria-hidden="true"><span></span><span></span></div>
+        <div>
+          <h1>Laya relay</h1>
+          <p id="connection">Checking local relay…</p>
+        </div>
+        <button id="refresh" class="icon-button" type="button" aria-label="Read the active page again">↻</button>
+      </header>
+
+      <section class="route-strip" aria-label="Routing path">
+        <div class="node active"><span class="pulse"></span><b>Laya</b></div>
+        <div class="track"><span id="route-progress"></span></div>
+        <div class="node output"><b id="model-label">model</b></div>
+      </section>
+
+      <section class="question-area">
+        <label for="question">Question from this page</label>
+        <textarea id="question" rows="5" placeholder="Select a question or focus its answer field, then read the page."></textarea>
+        <div class="source-line">
+          <span id="page-title">No page read yet</span>
+          <span id="context-size"></span>
+        </div>
+        <details class="context-preview">
+          <summary>Full bound-tab context sent to the model</summary>
+          <textarea id="full-context" rows="7" readonly aria-label="Full bound-tab context sent to the model"></textarea>
+        </details>
+      </section>
+
+      <fieldset class="mode-switch">
+        <legend>Route</legend>
+        <label><input type="radio" name="mode" value="auto" checked><span>Auto</span></label>
+        <label><input type="radio" name="mode" value="fast"><span>Fast</span></label>
+        <label><input type="radio" name="mode" value="deep"><span>Deep</span></label>
+      </fieldset>
+
+      <section class="direct-options" aria-label="Browser control">
+        <label>
+          <input id="direct-mode" type="checkbox" checked>
+          <span><b>Direct mode</b><small>Read, answer, and operate the detected control.</small></span>
+        </label>
+        <label>
+          <input id="auto-submit" type="checkbox" checked>
+          <span><b>Check above 50%</b><small>Click Check answer only when answer confidence is greater than 50%.</small></span>
+        </label>
+        <label class="delay-option" for="submit-delay">
+          <span aria-hidden="true" class="delay-icon">⌛</span>
+          <span><b>Delay before Check</b><small>Wait before submitting; 0 checks immediately.</small></span>
+          <span class="delay-input"><input id="submit-delay" type="number" min="0" max="300" step="1" value="0" inputmode="numeric"><small>sec</small></span>
+        </label>
+      </section>
+
+      <button id="ask" class="primary" type="button">Answer this question</button>
+
+      <section class="answer-area" aria-live="polite">
+        <div class="answer-head">
+          <h2>Answer</h2>
+          <span id="route-note"></span>
+        </div>
+        <div id="answer" class="answer empty">The answer will stream here.</div>
+      </section>
+
+      <footer class="actions">
+        <button id="copy" type="button" disabled>Copy</button>
+        <button id="insert" type="button" disabled>Insert into page</button>
+      </footer>
+      <p id="status" class="status" role="status"></p>
+    </main>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

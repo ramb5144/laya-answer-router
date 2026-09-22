@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Laya extension test page</title>
+    <style>
+      body { max-width: 760px; margin: 64px auto; padding: 0 24px; font: 17px/1.55 Georgia, serif; color: #18213a; }
+      fieldset { border: 1px solid #cbd4e4; border-radius: 16px; padding: 24px; }
+      legend { font-size: 24px; font-weight: 700; padding: 0 8px; }
+      label { display: block; margin: 10px 0; }
+      textarea { width: 100%; min-height: 140px; margin-top: 18px; padding: 12px; font: 16px/1.5 system-ui; box-sizing: border-box; }
+      button { margin-top: 14px; padding: 10px 16px; border: 0; border-radius: 9px; color: white; background: #245cf2; font: 600 15px system-ui; }
+      button:disabled { opacity: .45; }
+      #result { min-height: 24px; font: 14px/1.4 system-ui; color: #087c72; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Extension test</h1>
+      <p>Select the question or focus the answer field, then open Laya Answer Router.</p>
+      <fieldset>
+        <legend>Why does increasing the sample size usually reduce the standard error of the mean?</legend>
+        <label><input type="radio" name="choice"> Because every observation becomes more accurate.</label>
+        <label><input type="radio" name="choice"> Because independent errors partly cancel across more observations.</label>
+        <label><input type="radio" name="choice"> Because the population variance becomes zero.</label>
+        <textarea aria-label="Explain your answer" placeholder="Write a short explanation"></textarea>
+        <button id="check-answer" type="button" disabled>Check answer</button>
+        <p id="result" role="status"></p>
+      </fieldset>
+    </main>
+    <script>
+      const answer = document.querySelector('textarea');
+      const check = document.querySelector('#check-answer');
+      const result = document.querySelector('#result');
+      answer.addEventListener('input', () => { check.disabled = !answer.value.trim(); });
+      check.addEventListener('click', () => { result.textContent = 'Check answer clicked.'; });
+    </script>
+  </body>
+</html>

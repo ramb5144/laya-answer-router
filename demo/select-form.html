@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Laya custom dropdown test</title>
+    <style>
+      body { max-width: 760px; margin: 64px auto; padding: 0 24px; font: 17px/1.55 system-ui; color: #18213a; }
+      section { border: 1px solid #cbd4e4; border-radius: 16px; padding: 24px; }
+      [role="combobox"] { display: inline-block; min-width: 120px; padding: 8px 12px; border: 2px solid #245cf2; border-radius: 8px; }
+      [role="listbox"] { width: 180px; margin-top: 4px; border: 1px solid #aab6cb; border-radius: 8px; background: white; }
+      [role="option"] { padding: 8px 12px; cursor: pointer; }
+      [role="option"]:hover { background: #edf2ff; }
+      button { margin-top: 18px; padding: 10px 16px; border: 0; border-radius: 9px; color: white; background: #245cf2; font-weight: 700; }
+      button:disabled { opacity: .45; }
+      #feedback { color: #18863c; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section id="question">
+        <h1>Part 3 of 4</h1>
+        <p><span id="prompt">Compared to part a, the answer to part b is</span>
+          <span id="answer" role="combobox" tabindex="0" aria-expanded="false" aria-haspopup="listbox" aria-labelledby="prompt">Select</span>
+          in absolute terms.</p>
+        <button id="check-answer" type="button" disabled>Check answer</button>
+        <p id="feedback" role="status"></p>
+      </section>
+    </main>
+    <script>
+      const combo = document.querySelector('#answer');
+      const check = document.querySelector('#check-answer');
+      const feedback = document.querySelector('#feedback');
+      const choices = ['larger', 'smaller', 'the same'];
+
+      combo.addEventListener('click', () => {
+        const existing = document.querySelector('[role="listbox"]');
+        if (existing) {
+          existing.remove();
+          combo.setAttribute('aria-expanded', 'false');
+          return;
+        }
+        const listbox = document.createElement('div');
+        listbox.id = 'answer-options';
+        listbox.setAttribute('role', 'listbox');
+        combo.setAttribute('aria-controls', listbox.id);
+        for (const label of choices) {
+          const option = document.createElement('div');
+          option.setAttribute('role', 'option');
+          option.textContent = label;
+          option.addEventListener('click', (event) => {
+            event.stopPropagation();
+            combo.textContent = label;
+            combo.setAttribute('aria-expanded', 'false');
+            listbox.remove();
+            check.disabled = false;
+          });
+          listbox.append(option);
+        }
+        combo.after(listbox);
+      });
+
+      combo.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          document.querySelector('[role="listbox"]')?.remove();
+          combo.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      check.addEventListener('click', () => {
+        feedback.textContent = combo.textContent === 'smaller' ? 'Good job!' : 'Incorrect. Try again.';
+      });
+    </script>
+  </body>
+</html>

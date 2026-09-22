@@ -1,0 +1,59 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/mcpb/main/schemas/mcpb-manifest-v0.4.schema.json",
+  "manifest_version": "0.4",
+  "name": "laya-answer-router",
+  "display_name": "Laya Answer Router",
+  "version": "0.4.0",
+  "description": "Lets Claude answer the current Chrome page through local Laya without browser driving.",
+  "long_description": "Connects Claude Desktop to the loopback-only Laya relay. The Chrome side panel captures bounded DOM text, Laya chooses a fast or deep model, and Claude receives the answer without screenshots, clicks, typing, or submission.",
+  "author": {
+    "name": "Laya Answer Router contributors"
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/server/index.js"],
+      "env": {
+        "LAYA_RELAY_URL": "${user_config.relay_url}",
+        "LAYA_MCP_TOKEN": "${user_config.relay_token}"
+      }
+    }
+  },
+  "user_config": {
+    "relay_url": {
+      "type": "string",
+      "title": "Local relay URL",
+      "description": "URL of the Laya relay running on this computer.",
+      "default": "http://127.0.0.1:8765",
+      "required": true
+    },
+    "relay_token": {
+      "type": "string",
+      "title": "Local relay token",
+      "description": "The same secret configured as LAYA_MCP_TOKEN in the local relay.",
+      "sensitive": true,
+      "required": true
+    }
+  },
+  "tools": [
+    {
+      "name": "laya_get_current_page",
+      "description": "Read the latest page captured by the Laya Chrome side panel."
+    },
+    {
+      "name": "laya_answer_current_page",
+      "description": "Answer a question using the latest captured Chrome page."
+    },
+    {
+      "name": "laya_answer_question",
+      "description": "Route and answer an explicitly supplied question."
+    }
+  ],
+  "keywords": ["laya", "routing", "browser", "questions"],
+  "compatibility": {
+    "claude_desktop": ">=1.0.0",
+    "platforms": ["darwin"]
+  }
+}

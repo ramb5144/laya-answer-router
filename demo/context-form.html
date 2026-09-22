@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Laya item-context regression fixture</title>
+    <style>
+      body { max-width: 820px; margin: 56px auto; padding: 0 24px; font: 17px/1.55 system-ui; color: #18213a; }
+      .parts { border: 1px solid #cbd4e4; border-radius: 16px; padding: 24px; }
+      .acs-partContainer { margin-top: 24px; border-top: 1px solid #d9e0ec; padding-top: 20px; }
+      [role="combobox"] { display: inline-block; min-width: 120px; padding: 8px 12px; border: 2px solid #245cf2; border-radius: 8px; }
+      [role="listbox"] { width: 180px; margin-top: 4px; border: 1px solid #aab6cb; border-radius: 8px; background: white; }
+      [role="option"] { padding: 8px 12px; }
+      button { margin-top: 18px; padding: 10px 16px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <article class="parts" id="item">
+        <h1>Elastic revenue regression</h1>
+        <p id="stem">If the demand for orange juice is elastic, will a decrease in its price increase or decrease sellers' revenue?</p>
+        <section class="acs-partContainer" role="region" aria-label="Part 1 of 2">
+          <h2>Part 1 of 2</h2>
+          <p><span id="prompt">If the price of orange juice decreases, revenue will</span>
+            <span id="answer" role="combobox" tabindex="0" aria-expanded="false" aria-haspopup="listbox" aria-labelledby="prompt">Select</span>.</p>
+          <button type="button" id="check" disabled>Check answer</button>
+        </section>
+        <button type="button" id="advance">Simulate Pearson part rerender</button>
+      </article>
+    </main>
+    <script>
+      const combo = document.querySelector('#answer');
+      let check = document.querySelector('#check');
+      const advance = document.querySelector('#advance');
+      const publish = (type, detail = {}) => {
+        const event = { type, at: performance.now(), ...detail };
+        window.testEvents = [...(window.testEvents || []), event];
+        parent.postMessage({ source: 'laya-demo', ...event }, '*');
+      };
+      const installCheck = () => check.addEventListener('click', () => {
+        publish('checked', { value: combo.textContent });
+        check.insertAdjacentHTML('afterend', '<p role="status" style="color:#18863c;font-weight:700">Good job!</p>');
+      });
+      installCheck();
+      combo.addEventListener('click', () => {
+        document.querySelector('[role="listbox"]')?.remove();
+        const list = document.createElement('div');
+        list.setAttribute('role', 'listbox');
+        for (const label of ['decrease', 'increase']) {
+          const option = document.createElement('div');
+          option.setAttribute('role', 'option');
+          option.textContent = label;
+          option.addEventListener('click', (event) => {
+            event.stopPropagation();
+            combo.textContent = label;
+            combo.setAttribute('aria-expanded', 'false');
+            list.remove();
+            publish('filled', { value: label });
+            const replacement = check.cloneNode(true);
+            replacement.disabled = false;
+            check.replaceWith(replacement);
+            check = replacement;
+            installCheck();
+          });
+          list.append(option);
+        }
+        combo.after(list);
+        combo.setAttribute('aria-expanded', 'true');
+      });
+      combo.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          document.querySelector('[role="listbox"]')?.remove();
+          combo.setAttribute('aria-expanded', 'false');
+        }
+      });
+      advance.addEventListener('click', () => {
+        document.querySelector('#stem')?.remove();
+        document.querySelector('.acs-partContainer').innerHTML = `
+          <h2>Part 2 of 2</h2>
+          <p id="prompt-2">Compared with the original price, the new revenue is</p>
+          <input type="text" aria-labelledby="prompt-2">
+          <button type="button">Check answer</button>`;
+      });
+    </script>
+  </body>
+</html>

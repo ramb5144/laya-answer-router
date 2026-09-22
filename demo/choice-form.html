@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jev dynamic question test</title>
+    <style>
+      body { max-width: 820px; margin: 48px auto; padding: 0 24px; font: 17px/1.5 system-ui; color: #17213a; }
+      fieldset { margin: 22px 0; padding: 24px; border: 1px solid #cbd4e4; border-radius: 15px; }
+      legend { max-width: 720px; padding: 0 8px; font-size: 20px; font-weight: 700; }
+      label { display: block; margin: 13px 0; }
+      button { padding: 10px 16px; border: 0; border-radius: 9px; color: white; background: #245cf2; font-weight: 700; }
+      button:disabled { opacity: .4; }
+      .feedback { min-height: 24px; color: #18863c; font-weight: 700; }
+      input[type="text"] { display: block; width: 240px; margin: 15px 0; padding: 9px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Dynamic question fixture</h1>
+      <div id="parts">
+        <fieldset data-part="1">
+          <legend id="question-1">Which explanation best describes why larger samples reduce standard error?</legend>
+          <div role="radiogroup" aria-labelledby="question-1">
+            <label><input type="radio" name="part-1"> A. Every measurement becomes exact.</label>
+            <label><input type="radio" name="part-1"> B. Independent errors partly cancel across more observations.</label>
+            <label><input type="radio" name="part-1"> C. Population variance becomes zero.</label>
+          </div>
+          <button type="button" data-check disabled>Check answer</button>
+          <p class="feedback" role="status"></p>
+        </fieldset>
+      </div>
+      <button id="next" type="button" disabled>Next</button>
+    </main>
+    <script>
+      const parts = document.querySelector('#parts');
+      const next = document.querySelector('#next');
+
+      parts.addEventListener('change', (event) => {
+        const fieldset = event.target.closest('fieldset');
+        if (fieldset) fieldset.querySelector('[data-check]').disabled = false;
+      });
+      parts.addEventListener('input', (event) => {
+        const fieldset = event.target.closest('fieldset');
+        if (fieldset) fieldset.querySelector('[data-check]').disabled = !event.target.value.trim();
+      });
+      parts.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-check]');
+        if (!button) return;
+        const fieldset = button.closest('fieldset');
+        fieldset.querySelector('.feedback').textContent = 'Good job!';
+        fieldset.querySelectorAll('input').forEach((input) => { input.disabled = true; });
+        button.disabled = true;
+        if (fieldset.dataset.part === '1' && !document.querySelector('[data-part="2"]')) {
+          parts.insertAdjacentHTML('beforeend', `
+            <fieldset data-part="2">
+              <legend id="question-2">A new part was added. Which choice should Jev detect?</legend>
+              <div role="radiogroup" aria-labelledby="question-2">
+                <label><input type="radio" name="part-2"> A. The completed first part.</label>
+                <label><input type="radio" name="part-2"> B. This newly inserted unanswered part.</label>
+              </div>
+              <button type="button" data-check disabled>Check answer</button>
+              <p class="feedback" role="status"></p>
+            </fieldset>
+          `);
+        } else {
+          next.disabled = false;
+        }
+      });
+      next.addEventListener('click', () => {
+        parts.innerHTML = `
+          <fieldset data-part="3">
+            <legend>What question appeared after Next?</legend>
+            <input type="text" aria-label="What question appeared after Next?">
+            <button type="button" data-check disabled>Check answer</button>
+            <p class="feedback" role="status"></p>
+          </fieldset>
+        `;
+        next.disabled = true;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Laya full bound-tab context fixture</title>
+    <style>
+      body { margin: 0; font: 16px/1.5 system-ui; color: #18213a; background: #eef2f8; }
+      header { padding: 18px 24px; background: #15213a; color: white; }
+      aside { margin: 18px 24px 0; padding: 14px 18px; border-radius: 12px; background: #fff5cd; }
+      iframe { display: block; width: calc(100% - 48px); height: 720px; margin: 18px 24px; border: 0; border-radius: 14px; background: white; }
+    </style>
+  </head>
+  <body>
+    <header><b>Economics course shell</b></header>
+    <aside id="course-reference">Course reference: for elastic demand, a price decrease increases total revenue.</aside>
+    <iframe title="Assignment Viewer" src="/demo-context"></iframe>
+    <script>
+      window.testEvents = [];
+      addEventListener('message', (event) => {
+        if (event.data?.source === 'laya-demo') window.testEvents.push(event.data);
+      });
+    </script>
+  </body>
+</html>

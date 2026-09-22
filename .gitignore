@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.DS_Store
+.venv/
+dist/
+coverage/
+claude-extension/server/index.js
+*.log
+*.key
+*.pem
+*.p12

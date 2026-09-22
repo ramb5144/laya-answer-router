@@ -1,0 +1,45 @@
+{
+  "name": "laya-answer-router",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "description": "A Chrome side-panel assistant that uses local Laya routing and server-side OpenAI generation.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ramb5144/laya-answer-router.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ramb5144/laya-answer-router/issues"
+  },
+  "homepage": "https://github.com/ramb5144/laya-answer-router#readme",
+  "scripts": {
+    "build:claude": "esbuild backend/mcp-server.ts --bundle --platform=node --target=node18 --format=esm --outfile=claude-extension/server/index.js",
+    "dev": "tsx watch backend/server.ts",
+    "pack:claude": "node scripts/package-claude.mjs",
+    "setup:bridge-token": "node scripts/setup-bridge-token.mjs",
+    "start": "tsx backend/server.ts",
+    "test": "npm run build:claude && node --import tsx --test test/*.test.ts test/*.test.js && python3 -m unittest discover -s backend -p 'test_*.py' -v",
+    "typecheck": "tsc --noEmit --pretty false",
+    "validate:claude": "mcpb validate claude-extension/manifest.json",
+    "check": "npm run typecheck && npm test"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "dotenv": "^18.0.1",
+    "openai": "^7.20.0"
+  },
+  "devDependencies": {
+    "@anthropic-ai/mcpb": "^2.1.2",
+    "@types/node": "^26.6.2",
+    "esbuild": "^0.28.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "overrides": {
+    "tmp": "0.2.7"
+  }
+}

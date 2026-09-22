@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Equation editor regression fixture</title>
+    <style>
+      body { max-width: 680px; margin: 64px auto; padding: 0 24px; font: 17px/1.5 system-ui; color: #17213a; }
+      .eqEditor { position: relative; margin: 18px 0; }
+      .eqDocument { position: relative; min-height: 52px; padding: 12px 16px; border: 2px solid #687796; border-radius: 8px; background: white; }
+      .eqDocument.current { border-color: #245cf2; }
+      .eqDocument.empty::before { content: "Enter an equation"; color: #75809a; }
+      .eqCaret { display: inline-block; width: 2px; height: 1.3em; margin-right: 2px; vertical-align: text-bottom; background: #17213a; }
+      .focusNode { position: absolute; inset: 0; width: 100%; height: 100%; box-sizing: border-box; opacity: .02; }
+      #rendered-answer { font: 22px Georgia, serif; }
+      #eqAccessibleLabel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+      button { padding: 10px 16px; border: 0; border-radius: 8px; color: white; background: #245cf2; font-weight: 700; }
+      button:disabled { opacity: .45; }
+      #feedback { min-height: 1.5em; color: #087c50; font-weight: 650; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Math response</h1>
+      <p id="stable-prompt">Solve <i>x</i> + 2 = 5. Enter the exact value of <i>x</i>.</p>
+
+      <div class="eqEditor">
+        <div class="eqDocument empty current">
+          <span class="eqCaret" aria-hidden="true"></span>
+          <span id="rendered-answer" aria-hidden="true"></span>
+          <input class="focusNode" type="text" value="  " aria-labelledby="stable-prompt eqAccessibleLabel" autocomplete="off">
+        </div>
+        <span id="eqAccessibleLabel">enter your response here</span>
+      </div>
+
+      <button id="check-answer" type="button" disabled>Check answer</button>
+      <p id="feedback" role="status" aria-live="polite"></p>
+    </main>
+
+    <script>
+      const placeholders = '\u2000\u2000';
+      const focusNode = document.querySelector('.focusNode');
+      const documentNode = document.querySelector('.eqDocument');
+      const accessibleLabel = document.querySelector('#eqAccessibleLabel');
+      const renderedAnswer = document.querySelector('#rendered-answer');
+      const checkAnswer = document.querySelector('#check-answer');
+      const feedback = document.querySelector('#feedback');
+
+      focusNode.value = placeholders;
+      focusNode.addEventListener('input', () => {
+        const answer = focusNode.value.replaceAll('\u2000', '').trim();
+        if (!answer) return;
+        accessibleLabel.textContent = answer;
+        renderedAnswer.textContent = answer;
+        documentNode.classList.remove('empty');
+        checkAnswer.disabled = false;
+        focusNode.value = placeholders;
+        feedback.textContent = '';
+      });
+
+      checkAnswer.addEventListener('click', () => {
+        feedback.textContent = `Correct — ${accessibleLabel.textContent} is the accepted response.`;
+      });
+    </script>
+  </body>
+</html>
